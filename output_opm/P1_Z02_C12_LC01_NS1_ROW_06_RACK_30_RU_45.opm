@@ -1,0 +1,1051 @@
+{
+  "JsonVersion": "1.0",
+  "TestDateTime": "2025-12-16T20:04:38Z",
+  "MeasurementId": "3618e9d0-7015-8186-5c53-3046c1241a89",
+  "MeasurementName": "P1_Z02_C12_LC01_NS1_ROW_06_RACK_30_RU_45",
+  "Identification": {
+    "JobId": "PATH_1_LCO1-NS3-LCO2-DHB-00002.A02",
+    "company": "EXFO",
+    "customer": "ACME CORP",
+    "OperatorA": "logan mason"
+  },
+  "Identifiers": [
+    {
+      "Name": "PATH_TRUNK",
+      "Value": "P1_A02"
+    },
+    {
+      "Name": "CONNECTOR",
+      "Value": "C12"
+    },
+    {
+      "Name": "BLDG_RM",
+      "Value": "LC01_NS1_LC02_DHB"
+    },
+    {
+      "Name": "ROW_RACK_RU",
+      "Value": "06_30_45_27_C_10"
+    },
+    {
+      "Name": "ENCLOSURE",
+      "Value": "OSE3456-P-P1-04"
+    }
+  ],
+  "Hardware": {
+    "UnitA": {
+      "ModelName": "PXM-P12 MPO Power Meter",
+      "SerialNumber": "FMB254116",
+      "LastCalibrationDate": "2025-10-14T00:00:00Z"
+    }
+  },
+  "Reporting": {
+    "RequiredTags": [
+      "opm",
+      "multifiber",
+      "loss"
+    ]
+  },
+  "Context": {
+    "JobId": "7c12b0a4-817e-46fb-b03f-3a270f7b0858",
+    "TestId": "846ec177-5668-4e54-88a1-efff975a3861",
+    "Source": "System"
+  },
+  "Measurement": {
+    "__type": "OPM",
+    "__subType": " ",
+    "OpmResultData": {
+      "Schema": "OPM-R-2.0",
+      "Id": "846ec177-5668-4e54-88a1-efff975a3861",
+      "Status": "Pass",
+      "Measurements": [
+        {
+          "Name": "1",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -11.08,
+            "Formatted": {
+              "Log": "-11.08 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.56,
+              "Formatted": {
+                "Log": "0.56 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "2",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.37,
+            "Formatted": {
+              "Log": "-10.37 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.14,
+              "Formatted": {
+                "Log": "0.14 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "3",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.78,
+            "Formatted": {
+              "Log": "-10.78 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.41,
+              "Formatted": {
+                "Log": "0.41 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "4",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.4,
+            "Formatted": {
+              "Log": "-10.40 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.35,
+              "Formatted": {
+                "Log": "0.35 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "5",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -11.83,
+            "Formatted": {
+              "Log": "-11.83 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.64,
+              "Formatted": {
+                "Log": "-0.64 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "6",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.67,
+            "Formatted": {
+              "Log": "-10.67 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.06,
+              "Formatted": {
+                "Log": "0.06 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "7",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -12.71,
+            "Formatted": {
+              "Log": "-12.71 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.01,
+              "Formatted": {
+                "Log": "-0.01 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "8",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.82,
+            "Formatted": {
+              "Log": "-10.82 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.32,
+              "Formatted": {
+                "Log": "0.32 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "9",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.55,
+            "Formatted": {
+              "Log": "-10.55 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.5,
+              "Formatted": {
+                "Log": "0.50 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "10",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.42,
+            "Formatted": {
+              "Log": "-10.42 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.51,
+              "Formatted": {
+                "Log": "0.51 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "11",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -11.81,
+            "Formatted": {
+              "Log": "-11.81 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.5,
+              "Formatted": {
+                "Log": "0.50 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "12",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.31e-06,
+            "Formatted": {
+              "Length": "1310 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.66,
+            "Formatted": {
+              "Log": "-10.66 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.46,
+              "Formatted": {
+                "Log": "0.46 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "1",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.96,
+            "Formatted": {
+              "Log": "-10.96 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.32,
+              "Formatted": {
+                "Log": "0.32 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "2",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -9.94,
+            "Formatted": {
+              "Log": "-9.94 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.16,
+              "Formatted": {
+                "Log": "-0.16 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "3",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.79,
+            "Formatted": {
+              "Log": "-10.79 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.21,
+              "Formatted": {
+                "Log": "0.21 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "4",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.47,
+            "Formatted": {
+              "Log": "-10.47 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.48,
+              "Formatted": {
+                "Log": "0.48 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "5",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -11.3,
+            "Formatted": {
+              "Log": "-11.30 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.55,
+              "Formatted": {
+                "Log": "-0.55 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "6",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.71,
+            "Formatted": {
+              "Log": "-10.71 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.4,
+              "Formatted": {
+                "Log": "-0.40 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "7",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -12.61,
+            "Formatted": {
+              "Log": "-12.61 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.35,
+              "Formatted": {
+                "Log": "-0.35 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "8",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.82,
+            "Formatted": {
+              "Log": "-10.82 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.04,
+              "Formatted": {
+                "Log": "-0.04 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "9",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.76,
+            "Formatted": {
+              "Log": "-10.76 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.45,
+              "Formatted": {
+                "Log": "-0.45 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "10",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -10.82,
+            "Formatted": {
+              "Log": "-10.82 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": -0.46,
+              "Formatted": {
+                "Log": "-0.46 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "11",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -11.16,
+            "Formatted": {
+              "Log": "-11.16 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.6,
+              "Formatted": {
+                "Log": "0.60 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        },
+        {
+          "Name": "12",
+          "Type": "Loss",
+          "Wavelength": {
+            "Value": 1.55e-06,
+            "Formatted": {
+              "Length": "1550 nm"
+            }
+          },
+          "Reference": {
+            "Value": -11.62,
+            "Formatted": {
+              "Log": "-11.62 dBm"
+            },
+            "Unit": "dBm",
+            "From": "Measured",
+            "Timestamp": "2025-12-16T12:24:24Z",
+            "Method": "3-Cord",
+            "ReferenceCordType": "LowAttenuationGrade"
+          },
+          "Readings": [
+            {
+              "Validity": "Valid",
+              "Value": 0.17,
+              "Formatted": {
+                "Log": "0.17 dB"
+              },
+              "Unit": "dB",
+              "Status": "Pass"
+            }
+          ],
+          "FiberLength": {
+            "LengthInfo": {
+              "Length": 399.063
+            },
+            "Status": "Unknown"
+          }
+        }
+      ],
+      "ThresholdSet": {
+        "OpmThresholds": [
+          {
+            "Wavelength": {
+              "Value": 1.31e-06,
+              "Formatted": {
+                "Length": "1310 nm"
+              }
+            },
+            "Type": "Loss",
+            "Max": {
+              "Value": 1.6,
+              "Unit": "dB",
+              "Formatted": {
+                "Log": "1.60 dB"
+              }
+            }
+          },
+          {
+            "Wavelength": {
+              "Value": 1.55e-06,
+              "Formatted": {
+                "Length": "1550 nm"
+              }
+            },
+            "Type": "Loss",
+            "Max": {
+              "Value": 1.6,
+              "Unit": "dB",
+              "Formatted": {
+                "Log": "1.60 dB"
+              }
+            }
+          }
+        ]
+      },
+      "Connectors": {
+        "ExpectedConnectors": {
+          "PolarityType": "MPO_B",
+          "Connectors": [
+            {
+              "RowLayouts": [
+                "111111111111"
+              ],
+              "ConnectorType": "Multifiber",
+              "ConnectorSubType": "MPO",
+              "Polishing": "NotDefined",
+              "FiberType": "NotDefined"
+            }
+          ]
+        },
+        "ActualConnectors": {
+          "PolarityType": "MPO_B",
+          "Connectors": [
+            {
+              "ConnectorType": "Multifiber",
+              "ConnectorSubType": "MPO",
+              "Polishing": "NotDefined",
+              "FiberType": "OS1"
+            }
+          ]
+        }
+      },
+      "LinkDefinition": {
+        "SpliceCount": 0,
+        "ConnectorCount": 2
+      },
+      "ApplicableNetworkingStds": [
+        "100GBASE-DR",
+        "100G-PSM4 2.0",
+        "200GBASE-DR4",
+        "400GBASE-DR4",
+        "128GFC-PSM4"
+      ]
+    }
+  },
+  "GlobalVerdict": "Pass"
+}
