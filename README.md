@@ -1,7 +1,7 @@
 # JSON2OPM
 
 JSON2OPM is a desktop utility that converts EXFO Exchange JSON test results into OPM (.opm) files, analyzes A/Z fiber pairs for consistency, and optionally merges clean A/Z pairs into a single Multi-Fiber OPM result.
-
+Merge of files requires specific syntax and naming convention. 
 This tool is designed for fiber test engineers working with high-density MPO/MTP links who need deterministic, auditable results.
 
 ---
