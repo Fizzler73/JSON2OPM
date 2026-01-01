@@ -1,6 +1,9 @@
-# Python cache
+# Python bytecode / cache
 __pycache__/
 *.pyc
 
-# Local user settings
+# Local user settings (paths, preferences)
 settings.json
+
+# Local safety backups
+*_backup_*.py
