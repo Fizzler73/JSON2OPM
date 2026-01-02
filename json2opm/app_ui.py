@@ -62,6 +62,52 @@ class JSON2OPMApp(tk.Tk):
         self._restore_merge_toggle()
         self._restore_punch_toggle()
 
+    def _build_merged_opm_filename(self, a_path: "Path", z_path: "Path") -> str:
+        """
+        Build merged filename strictly from the normalized A and Z filenames.
+
+        Expected stems:
+        A: P1_A03_C01_LC01_NS1_ROW_04_RACK_30_RU_48
+        Z: P1_Z03_C01_LC02_DHB_ROW_13_RACK_C_RU_10
+
+        Output (example):
+        P1_03_C01_LC01_NS1__LC02_DHB_ROW_04_RACK_30_RU_48_ROW_13_RACK_C_RU_10_MergeMF.opm
+        """
+        import re
+
+        a_stem = a_path.stem
+        z_stem = z_path.stem
+
+        # Pull: P#, side, enclosure(2 digits), connector(2 digits), rest
+        # Example: P1_A03_C01_<rest...>
+        rx = r"^(P\d+)_([AZ])(\d{2})_C(\d{2})_(.+)$"
+
+        ma = re.match(rx, a_stem)
+        mz = re.match(rx, z_stem)
+
+        if not ma or not mz:
+            # fallback if unexpected
+            return f"{a_stem}__{z_stem}_MergeMF.opm"
+
+        p_a, side_a, enc_a, c_a, rest_a = ma.groups()
+        p_z, side_z, enc_z, c_z, rest_z = mz.groups()
+
+        # Pair key is project + enclosure + connector (but without side letter)
+        # P1_03_C01
+        pair_key = f"{p_a}_{enc_a}_C{c_a}"
+
+        # Build merged name: <pair_key>_<Arest>__<Zrest>_MergeMF.opm
+        merged_stem = f"{pair_key}_{rest_a}__{rest_z}_MergeMF"
+
+        # Safe tokenization: keep underscores/hyphens, remove illegal filename chars
+        def _safe(s: str) -> str:
+            bad = '<>:"/\\|?*'
+            for ch in bad:
+                s = s.replace(ch, "_")
+            return s.strip().strip(".")
+
+        return _safe(merged_stem) + ".opm"
+
     # ----------------------------
     # UI
     # ----------------------------
@@ -296,6 +342,121 @@ class JSON2OPMApp(tk.Tk):
             f"so they produce unique output names."
         )
 
+    def _idents_to_map(self, src_json: dict) -> dict[str, str]:
+        """
+        Exchange JSON has identifiers as a list of {Name, Value} under brief.Identifiers.
+        Return a simple dict mapping Name -> Value (string).
+        """
+        out: dict[str, str] = {}
+        brief = src_json.get("brief")
+        if not isinstance(brief, dict):
+            return out
+
+        ids = brief.get("Identifiers")
+        if not isinstance(ids, list):
+            return out
+
+        for item in ids:
+            if not isinstance(item, dict):
+                continue
+            name = item.get("Name")
+            val = item.get("Value")
+            if isinstance(name, str) and val is not None:
+                out[name] = str(val)
+
+        return out
+
+
+    def _safe_token(self, s: str) -> str:
+        """
+        Windows-safe token for filenames. No ?, :, *, etc. Also strips spaces.
+        """
+        if s is None:
+            return "NA"
+        s = str(s).strip()
+        if not s:
+            return "NA"
+
+        # Replace invalid filename chars
+        for ch in ['<', '>', ':', '"', '/', '\\', '|', '?', '*']:
+            s = s.replace(ch, "_")
+
+        # Collapse whitespace
+        s = s.replace(" ", "_")
+        while "__" in s:
+            s = s.replace("__", "_")
+
+        return s.strip("._") or "NA"
+
+
+    def _split_side_tokens(self, value: str, side: str, expect_pairs: int) -> str:
+        """
+        Split a concatenated identifier like:
+        BLDG_RM: LC01_NS1_LC02_DHB  (expect_pairs=2) -> A gets first 2 tokens, Z gets last 2 tokens
+        ROW_RACK_RU: 04_30_48_13_C_10 (expect_pairs=3) -> A gets first 3 tokens, Z gets last 3 tokens
+
+        If token count isn't 2*expect_pairs, we just return the whole thing.
+        """
+        if not value:
+            return "NA"
+        toks = [t for t in str(value).split("_") if t]
+
+        if len(toks) == 2 * expect_pairs:
+            if side.upper() == "A":
+                use = toks[:expect_pairs]
+            else:
+                use = toks[expect_pairs:]
+            return "_".join(use)
+
+        # unexpected format; return original (still safe-tokenized later)
+        return "_".join(toks) if toks else "NA"
+
+
+    def _build_normalized_output_name(self, src_json: dict, src_path: Path) -> str:
+        """
+        Build output OPM filename WITHOUT changing JSON content.
+
+        Rules:
+        - PATH/TRUNK + A/Z + Cxx come from the source JSON filename (src_path.stem)
+        Example: P1_Z03_C01_...
+        - Location + ROW/RACK/RU come from identifiers but split by side:
+        BLDG_RM: A=first half, Z=second half
+        ROW_RACK_RU: A=first half, Z=second half
+        """
+        stem = src_path.stem
+
+        # Determine side from the source filename
+        # e.g. "P1_A03_C01_..." or "P1_Z03_C01_..."
+        m = re.match(r"^(P\d+_[AZ]\d+_C\d{2})_", stem)
+        prefix = m.group(1) if m else stem.split("_")[0]  # fallback
+
+        side = "A"
+        m2 = re.match(r"^P\d+_([AZ])\d+_C\d{2}", prefix)
+        if m2:
+            side = m2.group(1).upper()
+
+        ids = self._idents_to_map(src_json)
+        bldg_rm_full = ids.get("BLDG_RM", "")
+        rrr_full = ids.get("ROW_RACK_RU", "")
+
+        bldg_rm_side = self._split_side_tokens(bldg_rm_full, side=side, expect_pairs=2)
+        rrr_side = self._split_side_tokens(rrr_full, side=side, expect_pairs=3)
+
+        # rrr_side is like "04_30_48" or "13_C_10"
+        rrr_toks = rrr_side.split("_") if rrr_side else []
+        row = rrr_toks[0] if len(rrr_toks) > 0 else "NA"
+        rack = rrr_toks[1] if len(rrr_toks) > 1 else "NA"
+        ru = rrr_toks[2] if len(rrr_toks) > 2 else "NA"
+
+        filename = (
+            f"{prefix}_"
+            f"{bldg_rm_side}_"
+            f"ROW_{row}_RACK_{rack}_RU_{ru}"
+            f".opm"
+        )
+
+        return self._safe_token(filename)
+
     def convert(self):
         if not self.input_dir or not self.output_dir:
             messagebox.showerror("Missing folder", "Please select both input (JSON) and output folders.")
@@ -334,7 +495,9 @@ class JSON2OPMApp(tk.Tk):
                 try:
                     src_json = load_json(src_path)
                     opm_json = map_pxm_json_to_opm(src_json)
-                    out_path = self.output_dir / (src_path.stem + ".opm")
+
+                    out_name = self._build_normalized_output_name(src_json, src_path)
+                    out_path = self.output_dir / out_name
 
                     if out_path.exists():
                         raise FileExistsError(self._explain_duplicate_output(out_path, src_path))
@@ -397,7 +560,7 @@ class JSON2OPMApp(tk.Tk):
             for m in ok_msgs:
                 self._log(m, "ok")
 
-            # ERRORS (bottom-ish, before summary)
+            # ERRORS
             has_any_errors = bool(err_msgs) or bool(error_blocks) or json_fail > 0
             if has_any_errors:
                 self._log_section_plain("Errors")
@@ -405,7 +568,6 @@ class JSON2OPMApp(tk.Tk):
                     self._log(m, "err")
 
                 for block in error_blocks:
-                    # block is already formatted; includes whether it's FAILURE vs MISMATCH
                     for ln in block:
                         if "λ" in ln:
                             self._log_lambda_line(ln, "err")
@@ -422,7 +584,7 @@ class JSON2OPMApp(tk.Tk):
                 "",
                 "Issue counts (pairs may include multiple issues):",
                 f"  🔥  High Loss failures: {stats.get('high_loss_pairs', 0)}",
-                f"  🔀  Polarity mismatches/unknown: {stats.get('polarity_issue_pairs', 0)}",
+                f"  🔀  Polarity issues (missing/mismatch/unknown): {stats.get('polarity_issue_pairs', 0)}",
                 f"  λ  Wavelength mismatches: {stats.get('wavelength_mismatches', 0)}",
                 f"  📏  Length missing/mismatched: {stats.get('length_issue_pairs', 0)}",
                 "",
@@ -661,18 +823,29 @@ class JSON2OPMApp(tk.Tk):
 
     def _extract_az_pair_key(self, stem: str) -> tuple[str | None, str | None]:
         """
-        Convert filename stem into:
-          pair_key: same for A and Z
-          side: "A" or "Z"
-        Examples:
-          P1_A03_C06_...   -> pair_key=P1_03_C06_...  side=A
-          P1_Z03_C06_...   -> pair_key=P1_03_C06_...  side=Z
+        Extract a stable A/Z pairing key from an OPM filename stem.
+
+        Works with normalized filenames that start with:
+        P1_A03_C01_...
+        P1_Z03_C01_...
+
+        Returns:
+        (pair_key, side) where side is "A" or "Z"
+        pair_key example: "P1_03_C01"
         """
-        m = re.match(r"^(P\d+)_([AZ])(\d{2})_(.+)$", stem, re.IGNORECASE)
+        import re
+
+        m = re.match(r"^(P\d+)_([AZ])(\d{2})_C(\d{2})(?:_|$)", stem)
         if not m:
             return None, None
-        p, side, num, rest = m.group(1), m.group(2).upper(), m.group(3), m.group(4)
-        return f"{p}_{num}_{rest}", side
+
+        path = m.group(1)          # P1
+        side = m.group(2)          # A or Z
+        trunk = m.group(3)         # 03
+        conn = m.group(4)          # 01
+
+        key = f"{path}_{trunk}_C{conn}"
+        return key, side
 
     def _analyze_pairs_from_opm_paths(self, opm_paths: list[Path]) -> dict:
         pairs: dict[str, dict[str, Path]] = {}
@@ -689,7 +862,7 @@ class JSON2OPMApp(tk.Tk):
 
             # merge-blocking mismatches ONLY
             "mismatched_pairs": 0,
-            "polarity_issue_pairs": 0,     # ✅ NEW: missing OR mismatch OR pol-status unknown
+            "polarity_issue_pairs": 0,     # missing OR mismatch OR PolarityStatus unknown
             "wavelength_mismatches": 0,
             "length_issue_pairs": 0,
 
@@ -722,7 +895,7 @@ class JSON2OPMApp(tk.Tk):
                 if high_loss:
                     stats["high_loss_pairs"] += 1
 
-                # -------- Polarity --------
+                # -------- Polarity (merge blocker) --------
                 expected_pol = self._get_expected_polarity(a_doc) or self._get_expected_polarity(z_doc)
                 a_pol = self._get_actual_polarity(a_doc)
                 z_pol = self._get_actual_polarity(z_doc)
@@ -734,6 +907,8 @@ class JSON2OPMApp(tk.Tk):
                 polarity_unknown = (pol_status_a == "Unknown") or (pol_status_z == "Unknown")
 
                 polarity_issue = polarity_missing or polarity_mismatch or polarity_unknown
+                if polarity_issue:
+                    stats["polarity_issue_pairs"] += 1
 
                 # -------- Wavelength (merge blocker) --------
                 a_wl = self._get_wavelengths_nm(a_doc)
@@ -757,14 +932,11 @@ class JSON2OPMApp(tk.Tk):
                 if length_issue:
                     stats["length_issue_pairs"] += 1
 
-                # -------- Merge blockers (MISMATCH definition) --------
-                has_merge_blocker = polarity_missing or polarity_mismatch or wavelength_mismatch or length_issue
+                # -------- Merge blockers (your definition) --------
+                # Merge allowed ONLY when there are NO polarity/length/wavelength mismatches.
+                has_merge_blocker = polarity_issue or length_issue or wavelength_mismatch
 
-                # Count polarity issue pairs (independent of merge blocker)
-                if polarity_issue:
-                    stats["polarity_issue_pairs"] += 1
-
-                # Punch row if any issue
+                # Punch row if any issue (failure or mismatch)
                 if has_merge_blocker or high_loss:
                     punch_rows.append(self._build_punch_row(
                         pair_key=key,
@@ -779,7 +951,8 @@ class JSON2OPMApp(tk.Tk):
                         length_issue=length_issue,
                     ))
 
-                # -------- Error blocks rendering --------
+                # -------- Render errors --------
+                # FAILURE-only (no merge blocker)
                 if high_loss and not has_merge_blocker:
                     side_txt = "A" if a_high_loss and not z_high_loss else "Z" if z_high_loss and not a_high_loss else "A+Z"
                     error_blocks.append([
@@ -789,16 +962,18 @@ class JSON2OPMApp(tk.Tk):
                         "    One or more readings have Status=Fail",
                         "",
                     ])
+                    # still eligible to merge (your rule)
                     eligible_pairs.append((key, sides["A"], sides["Z"]))
                     continue
 
+                # No issues at all → eligible
                 if not has_merge_blocker and not high_loss:
                     eligible_pairs.append((key, sides["A"], sides["Z"]))
                     continue
 
+                # MISMATCH (merge blocker)
                 if has_merge_blocker:
                     stats["mismatched_pairs"] += 1
-
                     lines: list[str] = [f"❌ A/Z MISMATCH  {key}"]
 
                     if high_loss:
@@ -810,12 +985,13 @@ class JSON2OPMApp(tk.Tk):
                             "",
                         ]
 
-                    if polarity_missing or polarity_mismatch:
+                    if polarity_issue:
                         lines += [
                             "  🔀 | Polarity",
                             f"    Expected: {self._fmt(expected_pol)}",
                             f"    A: {self._fmt(a_pol)}",
                             f"    Z: {self._fmt(z_pol)}",
+                            f"    Status: A={self._fmt(pol_status_a)}  Z={self._fmt(pol_status_z)}",
                             "",
                         ]
 
@@ -873,8 +1049,98 @@ class JSON2OPMApp(tk.Tk):
             "punch_rows": punch_rows,
             "length_threshold": length_threshold,
         }
+        
+    def _build_normalized_opm_filename_from_src(self, src_doc: dict, src_stem: str) -> str:
+        """
+        Build normalized OPM filename using the INPUT JSON (src_doc) identifiers.
+        Does NOT modify any JSON data. Filename only.
 
-    
+        Target format:
+        {ENCLOSURE}_{PATH_TRUNK}_{CONNECTOR}_{BLDG_RM_SIDE}_ROW_{row}_RACK_{rack}_RU_{ru}.opm
+
+        Where:
+        - ENCLOSURE / PATH_TRUNK / CONNECTOR come from src_stem (reliable in your dataset)
+        - BLDG_RM and ROW/RACK/RU come from concatenated identifiers when available
+            (BLDG_RM: LC01_NS1_LC02_DHB ; ROW_RACK_RU: 04_30_48_13_C_10)
+        - side is inferred from PATH_TRUNK in src_stem (contains _Axx_ or _Zxx_)
+        """
+        import re
+
+        def safe(s: str) -> str:
+            s = str(s) if s is not None else ""
+            for ch in '<>:"/\\|?*':
+                s = s.replace(ch, "-")
+            return s.strip() or "NA"
+
+        # ---- Parse src_stem for enclosure / side / trunk / connector ----
+        # Example: P1_A03_C01_LC01_NS1_ROW_04_RACK_30_RU_48
+        m = re.match(r"^([A-Za-z0-9]+)_([AZ])(\d+)_C(\d+)", src_stem, re.IGNORECASE)
+        if not m:
+            # If somehow stem doesn't match, fall back to the original stem + .opm safely.
+            return safe(src_stem) + ".opm"
+
+        enclosure = m.group(1)
+        side = m.group(2).upper()
+        trunk_num = m.group(3)
+        connector = f"C{m.group(4)}"
+
+        path_trunk = f"{enclosure}_{side}{trunk_num}"
+
+        # ---- Pull concatenated identifiers from INPUT JSON ----
+        # We will NOT modify them; just read.
+        identifiers = None
+        if isinstance(src_doc, dict):
+            b = src_doc.get("brief")
+            if isinstance(b, dict):
+                identifiers = b.get("Identifiers")
+        if not isinstance(identifiers, dict):
+            identifiers = {}
+
+        bldg_rm_concat = identifiers.get("BLDG_RM")
+        row_rack_ru_concat = identifiers.get("ROW_RACK_RU")
+
+        # ---- Derive BLDG_RM for the correct side ----
+        # LC01_NS1_LC02_DHB -> A=LC01_NS1 ; Z=LC02_DHB
+        bldg_rm_side = None
+        if isinstance(bldg_rm_concat, str) and bldg_rm_concat.strip():
+            parts = [p for p in bldg_rm_concat.split("_") if p]
+            if len(parts) >= 4:
+                a_bldg = "_".join(parts[0:2])
+                z_bldg = "_join".join([])  # placeholder to avoid accidental NameError
+
+                z_bldg = "_".join(parts[2:4])
+                bldg_rm_side = a_bldg if side == "A" else z_bldg
+
+        # Fallback: parse BLDG_RM from src_stem (A-side naming was correct there)
+        if not bldg_rm_side:
+            m_loc = re.search(r"_C\d+_([A-Za-z0-9]+_[A-Za-z0-9]+)_ROW_", src_stem)
+            if m_loc:
+                bldg_rm_side = m_loc.group(1)
+            else:
+                bldg_rm_side = "BLDG_RM"
+
+        # ---- Derive ROW/RACK/RU for the correct side ----
+        # 04_30_48_13_C_10 -> A=(04,30,48) ; Z=(13,C,10)
+        row = rack = ru = None
+        if isinstance(row_rack_ru_concat, str) and row_rack_ru_concat.strip():
+            parts = [p for p in row_rack_ru_concat.split("_") if p]
+            if len(parts) >= 6:
+                if side == "A":
+                    row, rack, ru = parts[0], parts[1], parts[2]
+                else:
+                    row, rack, ru = parts[3], parts[4], parts[5]
+
+        # Fallback: parse ROW/RACK/RU from src_stem
+        if row is None or rack is None or ru is None:
+            m_rrr = re.search(r"_ROW_([^_]+)_RACK_([^_]+)_RU_([^_]+)$", src_stem)
+            if m_rrr:
+                row, rack, ru = m_rrr.group(1), m_rrr.group(2), m_rrr.group(3)
+            else:
+                row, rack, ru = "NA", "NA", "NA"
+
+        # Assemble exactly in your preferred style
+        filename = f"{enclosure}_{side}{trunk_num}_{connector}_{bldg_rm_side}_ROW_{row}_RACK_{rack}_RU_{ru}.opm"
+        return safe(filename).replace(" ", "_")
 
     # ----------------------------
     # Merge
@@ -887,48 +1153,88 @@ class JSON2OPMApp(tk.Tk):
 
     def _merge_opm_docs(self, a_doc: dict, z_doc: dict) -> dict:
         """
-        Simple merge: keep A doc as base, append Z Measurements to A Measurements,
-        and update verdict fields conservatively.
+        Merge A + Z OPM docs into a single "MergeMF" output.
+
+        IMPORTANT:
+        - We do NOT change original JSON data in the individual A/Z files.
+        - This merged output combines the measurement lists:
+            A stays as fibers 1..N
+            Z is shifted to fibers (N+1)..(2N)
+        - The "fiber number" in this schema is stored in each measurement object's "Name"
+        (string digits like "1", "2", ...).
         """
+        import copy
+
         merged = copy.deepcopy(a_doc)
 
-        a_od = merged.get("OpticalData", {})
-        z_od = z_doc.get("OpticalData", {})
+        # Locate measurements list in the OPM structure we generate
+        def _get_measurements(doc: dict) -> list:
+            try:
+                meas = doc["Measurement"]["OpmResultData"]["Measurements"]
+                return meas if isinstance(meas, list) else []
+            except Exception:
+                return []
 
-        a_meas = a_od.get("Measurements", [])
-        z_meas = z_od.get("Measurements", [])
+        a_meas = _get_measurements(a_doc)
+        z_meas = _get_measurements(z_doc)
 
-        combined = []
-        for m in (a_meas or []):
-            m2 = copy.deepcopy(m)
-            if "ResultState" not in m2:
-                m2["ResultState"] = "Active"
-            fl = m2.get("FiberLength")
-            if isinstance(fl, dict) and "Origin" not in fl:
-                fl["Origin"] = "Unknown"
-            combined.append(m2)
+        # If either side is missing measurements, just return A copy (safe fallback)
+        if not a_meas or not z_meas:
+            return merged
 
-        for m in (z_meas or []):
-            m2 = copy.deepcopy(m)
-            if "ResultState" not in m2:
-                m2["ResultState"] = "Active"
-            fl = m2.get("FiberLength")
-            if isinstance(fl, dict) and "Origin" not in fl:
-                fl["Origin"] = "Unknown"
-            combined.append(m2)
+        # Find the max fiber index on A by reading numeric "Name" fields
+        a_max = 0
+        for m in a_meas:
+            name = m.get("Name")
+            if isinstance(name, str) and name.isdigit():
+                a_max = max(a_max, int(name))
 
-        a_od["Measurements"] = combined
-        if "AutoWavelength" not in a_od:
-            a_od["AutoWavelength"] = False
+        # If we couldn't determine A max, assume 12 (common MPO-12), but keep it safe.
+        if a_max <= 0:
+            a_max = 12
 
-        worst = self._worst_verdict(a_doc.get("GlobalVerdict"), z_doc.get("GlobalVerdict"))
-        merged["GlobalVerdict"] = worst
-        a_od["Status"] = worst
-        merged["OpticalData"] = a_od
+        # Shift Z measurement fiber numbers by +a_max
+        z_shifted = []
+        for m in z_meas:
+            mm = copy.deepcopy(m)
+            name = mm.get("Name")
+            if isinstance(name, str) and name.isdigit():
+                mm["Name"] = str(int(name) + a_max)
+            z_shifted.append(mm)
+
+        # Write merged measurement list
+        try:
+            merged["Measurement"]["OpmResultData"]["Measurements"] = list(a_meas) + z_shifted
+        except Exception:
+            # If structure isn't what we expect, just return A copy
+            return merged
+
+        # Best-effort: set verdict to worst-case of A/Z (if present)
+        def _verdict(doc: dict) -> str | None:
+            try:
+                v = doc["Measurement"]["OpmResultData"].get("GlobalVerdict")
+                return str(v) if v is not None else None
+            except Exception:
+                return None
+
+        a_v = _verdict(a_doc)
+        z_v = _verdict(z_doc)
+        # If either is Fail, set Fail; else keep A's
+        if (a_v == "Fail") or (z_v == "Fail"):
+            try:
+                merged["Measurement"]["OpmResultData"]["GlobalVerdict"] = "Fail"
+            except Exception:
+                pass
 
         return merged
 
-    def _merge_eligible_pairs(self, eligible_pairs: list[tuple[str, Path, Path]], out_dir: Path) -> dict:
+    def _merge_eligible_pairs(self, eligible_pairs: list[tuple[str, "Path", "Path"]], output_dir: "Path") -> dict:
+        """
+        Merge eligible A/Z pairs to MergeMF files.
+
+        eligible_pairs items are: (pair_key, a_path, z_path)
+        NOTE: pair_key is used only for logging; filename is built from the paths.
+        """
         merged_msgs: list[str] = []
         merge_write_errors: list[str] = []
         merged = 0
@@ -938,13 +1244,17 @@ class JSON2OPMApp(tk.Tk):
             try:
                 a_doc = load_json(a_path)
                 z_doc = load_json(z_path)
+
                 merged_doc = self._merge_opm_docs(a_doc, z_doc)
 
-                out_path = out_dir / f"{a_path.stem}_MergeMF.opm"
+                out_name = self._build_merged_opm_filename(a_path, z_path)
+                out_path = output_dir / out_name
+
                 if out_path.exists():
                     raise FileExistsError(f"Output already exists: {out_path.name}")
 
                 with out_path.open("w", encoding="utf-8") as f:
+                    import json
                     json.dump(merged_doc, f, indent=2)
 
                 merged += 1
